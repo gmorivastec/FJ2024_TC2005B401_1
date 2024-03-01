@@ -4,10 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using TMPro;
 
 
 public class Movimiento : MonoBehaviour
 {
+   [SerializeField]
+    private TMP_Text _textito; 
 
     // variables de instancia 
     // se pueden utilizar para parametrizar comportamiento
@@ -20,6 +23,8 @@ public class Movimiento : MonoBehaviour
 
     [SerializeField]
     private float _velocidadDelObjeto = 5;
+
+    
 
     Transform _transformito;
 
@@ -52,6 +57,12 @@ public class Movimiento : MonoBehaviour
         // normalmente un atríbuto serializado u obtenido de getcomponent
         // hay que checar que no sea nulo
         Assert.IsNotNull(_transformito, "TRANSFORMITO FUE NULL!");
+
+        // MUY IMPORTANTE
+        // si tenemos componentes que sean asignados desde editor checar por nulidad
+        Assert.IsNotNull(_textito, "TEXTITO FUE NULO, VERIFICA!");
+
+        _textito.text = "HOLA AMIGUITOS!";
     }
 
     // Update is called once per frame
@@ -79,19 +90,19 @@ public class Movimiento : MonoBehaviour
         // true - frame anterior libre, frame actual presionado
         if(Input.GetKeyDown(KeyCode.A))
         {
-            print("KEYDOWN A");
+            // print("KEYDOWN A");
         }
 
         // true - frame anterior presionada, frame actual presionada
         if(Input.GetKey(KeyCode.A))
         {
-            print("KEY A");
+           // print("KEY A");
         }
 
         // true - frame anterior presionada, frame actual libre
         if(Input.GetKeyUp(KeyCode.A))
         {
-            print("KEYUP A");
+            // print("KEYUP A");
         }
 
         if(Input.GetMouseButtonDown(0))
@@ -166,7 +177,64 @@ public class Movimiento : MonoBehaviour
     // - 2 o más objetos (obviamente.)
     // - todos los gameobjects involucrados tienen collider
     // - al menos el objeto que se mueve tiene rigidbody
+    // IMPORTANTE - el del rigidbody se debe mover
 
     // rigidbody - componente que se encarga de suscribir a un objeto
     // al motor de la física
+
+    // momentos de la detección de colisión
+    // estos mensajes se invocan en todos los involucrados
+    void OnCollisionEnter(Collision c)
+    {
+        // objeto de tipo collision tiene info respecto a la colisión
+        // objetos involucrados
+        // fuerza 
+        // puntos de contacto
+        // Etc
+        print(
+            string.Format(
+                "COLLISION ENTER: {0} {1} {2}", 
+                c.transform.name,
+                c.gameObject.layer,
+                c.gameObject.tag
+            )
+        );
+
+        // algo típico en la colisión - destrucción
+        Destroy(c.gameObject);
+
+        // cómo discriminar en la colisión
+        if(c.gameObject.tag == "Tagcita")
+        {
+            // hacer algo
+        }
+    }
+
+    void OnCollisionStay(Collision c)
+    {
+        print("COLLISION STAY");
+    }
+
+    void OnCollisionExit(Collision c)
+    {
+        print("COLLISION EXIT");
+    }
+
+    // ¿qué pasa si no quiero una reacción física?
+    // usamos triggers
+
+    void OnTriggerEnter(Collider c)
+    {
+        print("TRIGGER ENTER");
+    }
+
+    void OnTriggerStay(Collider c)
+    {
+        print("TRIGGER STAY");
+    }
+
+    void OnTriggerExit(Collider c)
+    {
+        print("TRIGGER EXIT");
+    }
 }
