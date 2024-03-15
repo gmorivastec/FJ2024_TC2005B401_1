@@ -32,11 +32,19 @@ public class Bala : MonoBehaviour
         // las 3 direcciones en mi objeto
         // los 3 son vectores unitarios
         _rigidbody.AddForce(transform.up * _fuerza, ForceMode.Impulse);
+
+        // destroy se puede invocar con un delay
+        Destroy(gameObject, 3);
     }
 
-    // Update is called once per frame  
-    void Update()
+    void OnCollisionEnter(Collision c)
     {
-        
+        if(c.gameObject.tag == "Tagcita")
+        {
+            // usamos Destroy 
+            // podemos destruir un componente o un gameobject completo
+            //Destroy(_rigidbody);
+            Destroy(gameObject);
+        }
     }
 }
