@@ -12,12 +12,16 @@ public class Bala : MonoBehaviour
     [SerializeField]
     private float _fuerza = 10;
 
+    void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
     // Start is called before the first frame update
     void Start()
     {
         // a tener en cuenta! 
         // esto puede ser nulo 
-        _rigidbody = GetComponent<Rigidbody>();
+        //_rigidbody = GetComponent<Rigidbody>();
 
         // rigidbody es el encargado de suscribir un objeto
         // al motor de la física
@@ -27,14 +31,24 @@ public class Bala : MonoBehaviour
         // el espacio donde estamos aplicando el movimiento
         // referencia local o global
 
+        
+        // destroy se puede invocar con un delay
+        // checa el método onEnabled si necesitas reiniciar 
+        // lógica en la bala
+        // https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnEnable.html
+        // Destroy(gameObject, 3);
+    }
+
+    void OnEnable()
+    {
+        _rigidbody.velocity = Vector3.zero;
+
         // transform. right, forward, up
         // referencias en espacio global de vectores que apuntan en 
         // las 3 direcciones en mi objeto
         // los 3 son vectores unitarios
         _rigidbody.AddForce(transform.up * _fuerza, ForceMode.Impulse);
 
-        // destroy se puede invocar con un delay
-        Destroy(gameObject, 3);
     }
 
     void OnCollisionEnter(Collision c)
@@ -44,7 +58,15 @@ public class Bala : MonoBehaviour
             // usamos Destroy 
             // podemos destruir un componente o un gameobject completo
             //Destroy(_rigidbody);
-            Destroy(gameObject);
+
+            // IDEAL - 
+            // un manager de destrucción que decida
+            // qué hacer con los gameobjects que pretendemos
+            // destruir 
+            // NO TAN IDEAL PERO FUNCIONA -
+            // regresa el objeto al pool
+            // Destroy(gameObject);
+            BalitaPool.Instance.ReturnObject(gameObject);
         }
     }
 }

@@ -109,8 +109,15 @@ public class Canion : MonoBehaviour
             // GameObject elNuevo = Instantiate(_balaOriginal);
             // elNuevo.transform.position = Vector3.zero;
 
+
+            /*
             Instantiate(
                 _balaOriginal,
+                _referencia.position,
+                _referencia.rotation
+            );
+            */
+            BalitaPool.Instance.GetObject(
                 _referencia.position,
                 _referencia.rotation
             );
