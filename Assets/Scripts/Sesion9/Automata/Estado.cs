@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Estado
 {
@@ -15,12 +16,19 @@ public class Estado
         private set;
     }
 
+    public Type Behaviour
+    {
+        get;
+        private set;
+    }
+
     // función de transferencia
     private Dictionary<Simbolo, Estado> _transicion;
 
-    public Estado(string nombre)
+    public Estado(string nombre, Type behaviour)
     {
         Nombre = nombre;
+        Behaviour = behaviour;
         _transicion = new Dictionary<Simbolo, Estado>();
     }
 

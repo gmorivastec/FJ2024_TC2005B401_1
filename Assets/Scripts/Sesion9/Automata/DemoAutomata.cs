@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class DemoAutomata : MonoBehaviour
 {
+    // NOTA IMPORTANTE Y UTIL
+    // behaviour trees:
+    // https://www.gamedeveloper.com/programming/behavior-trees-for-ai-how-they-work
 
     // Estados
     private Estado _feliz, _triste, _enojado;
@@ -14,13 +17,17 @@ public class DemoAutomata : MonoBehaviour
     // estado actual / inicial
     private Estado _estadoActual;
 
+    // referencia al comportamiento actual
+    private MonoBehaviour _comportamientoActual;
+
+
     // Start is called before the first frame update
     void Start()
     {
         // inicializar estados
-        _feliz = new Estado("FELIZ");
-        _triste = new Estado("TRISTE");
-        _enojado = new Estado("ENOJADO");
+        _feliz = new Estado("FELIZ", typeof(FelizBehaviour));
+        _triste = new Estado("TRISTE", typeof(TristeBehaviour));
+        _enojado = new Estado("ENOJADO", typeof(EnojadoBehaviour));
 
         // inicializar simbolos
         _gritar = new Simbolo("GRITAR");
@@ -37,27 +44,36 @@ public class DemoAutomata : MonoBehaviour
 
         // estado inicial
         _estadoActual = _feliz;
+        _comportamientoActual = gameObject.AddComponent(_estadoActual.Behaviour) as MonoBehaviour;
     }
 
     // Update is called once per frame
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.G))
-        {
-            _estadoActual = _estadoActual.AplicarSimbolo(_gritar);
-        }
+            IntercambioDeEstados(_gritar);
 
         if(Input.GetKeyDown(KeyCode.P))
-        {
-            _estadoActual = _estadoActual.AplicarSimbolo(_pisar);
-        }
+            IntercambioDeEstados(_pisar);
 
         if(Input.GetKeyDown(KeyCode.A))
-        {
-            _estadoActual = _estadoActual.AplicarSimbolo(_alimentar);
-        }
+            IntercambioDeEstados(_alimentar);
 
-        print(_estadoActual.Nombre);
+    }
+    
+    private void IntercambioDeEstados(Simbolo simbolo)
+    {
+        // verificar si el estado realmente cambia
+        Estado nuevoEstado = _estadoActual.AplicarSimbolo(simbolo);
 
+        if(nuevoEstado == _estadoActual)
+            return;
+
+        // quitar componente viejo, agregar componente nuevo
+        Destroy(_comportamientoActual);
+        _comportamientoActual = gameObject.AddComponent(nuevoEstado.Behaviour) as MonoBehaviour;
+    
+        // actualizamos estado actual
+        _estadoActual = nuevoEstado;
     }
 }
